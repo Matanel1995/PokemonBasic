@@ -1,0 +1,29 @@
+{
+  "pokemon": [
+    {
+      "name": "Pikachu",
+      "type": "Electric",
+      "skills": ["Thunderbolt", "Quick Attack", "Iron Tail"]
+    },
+    {
+      "name": "Charizard",
+      "type": "Fire/Flying",
+      "skills": ["Flamethrower", "Dragon Claw", "Fly"]
+    },
+    {
+      "name": "Bulbasaur",
+      "type": "Grass/Poison",
+      "skills": ["Vine Whip", "Poison Powder", "Sleep Powder"]
+    },
+    {
+      "name": "Gyarados",
+      "type": "Water/Flying",
+      "skills": ["Hydro Pump", "Dragon Dance", "Hyper Beam"]
+    },
+    {
+      "name": "Alakazam",
+      "type": "Psychic",
+      "skills": ["Psychic", "Shadow Ball", "Calm Mind"]
+    }
+  ]
+}
