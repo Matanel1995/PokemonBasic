@@ -1,13 +1,13 @@
 class PokemonModel{
   final String name;
   final String type;
-  final List<dynamic> skills;
+  final List<String> skills;
 
 
   PokemonModel(this.name, this.type, this.skills);
 
   PokemonModel.fromJson(Map<String, dynamic> json)
-    : name = json['species']['name'] as String,
+    : name = json['name'] as String,
       type = json['type'] as String,
       skills = json['abilities'] as List<String>;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pokemon/Models/PokemonModel.dart';
 import 'dart:convert';
 
 class DetailsPage extends StatelessWidget {
@@ -13,6 +14,8 @@ class DetailsPage extends StatelessWidget {
     if (res.statusCode == 200) {
       // If the server returned a 200 OK response, parse the JSON.
       final result = json.decode(res.body);
+      var test = PokemonModel.fromJson(result);
+      // print(test);
       return result as Map<String, dynamic>;
     } else {
       // If the server did not return a 200 OK response, throw an exception.

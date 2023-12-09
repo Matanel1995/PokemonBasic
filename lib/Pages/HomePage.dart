@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
-import 'package:pokemon/Models/PokemonModel.dart';
-
 import 'package:pokemon/Widgets/PokemonBox.dart';
 
+import 'package:pokemon/HP/api.dart' as hpApi;
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -16,83 +14,77 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  List<dynamic> pokemonsList = [];
-  List<PokemonModel> pokemonsModals = [];
+
+  List<Map<String, String>> pokemonsList = [];
   List<String> allPokemons = [];
 
+  Future fetchPokemons({limit =100 ,offset= 0} ) async {
+    var pokemonUrl = 'https://pokeapi.co/api/v2/pokemon?limit=$limit&offset=$offset';
 
-  Future<dynamic> fetchPokemons() async {
-    final res = await http
-        .get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=100&offset=0'));
-    if (res.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      final result = await json.decode(res.body);
-      return result['results'];
-    }
-    else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to fetch Pokemons');
-    }
-  }
-
-  Future<dynamic> readJSon() async {
-
-    final res = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon?limit=100&offset=0'));
+    final res = await http.get(
+        Uri.parse(pokemonUrl));
     final result = await json.decode(res.body);
-    setState(() {
-      pokemonsList = result['results'];
-    });
+
+    if (result['results'] != null) {
+      List<Map<String, String>> pokemonList = (result['results'] as List).map((
+          pokemonJson) {
+        return {
+          'name': pokemonJson['name'].toString(),
+          'url': pokemonJson['url'].toString(),
+        };
+      }).toList();
+
+      setState(() {
+        pokemonsList = pokemonList;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme
+            .of(context)
+            .colorScheme
+            .background,
         title: const Text("Pokedex"),
         centerTitle: true,
       ),
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Expanded(
               child: ListView.builder(
-                  itemCount: pokemonsList.length,
-                  itemBuilder: (context, index) {
-                    for (var pokemon in pokemonsList) {
-                      // PokemonModel tempPokemon = PokemonModel(pokemon['name'], pokemon['type'], pokemon['skills']);
-                      // pokemonsModals.add(tempPokemon);
-                      allPokemons.add(pokemon['name']);
-                    }
-                    return PokemonBox(pokemonName: allPokemons[index]);
-                  }),
+                itemCount: pokemonsList.length,
+                itemBuilder: (context, index) {
+                  return PokemonBox(
+                      pokemonName: pokemonsList[index]['name'] ?? '');
+                },
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    readJSon();
+                  onPressed: () async {
+                    await fetchPokemons();
                   },
-                  child: const Center(
-                    child: Text("Load Pokemons!"),
-                  )
+                  child: const Text("Load Pokemons!"),
                 ),
                 ElevatedButton(
-                    onPressed: () {setState(() {
+                  onPressed: () {
+                    setState(() {
+                      hpApi.callApi();
                       pokemonsList = [];
-                    });},
-                    child: const Center(
-                      child: Text("Clear Pokemons!"),
-                    )
-                )
+                    });
+                  },
+                  child: const Text("Clear Pokemons!"),
+                ),
               ],
-
-            )
+            ),
           ],
         ),
       ),
